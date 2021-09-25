@@ -1,11 +1,13 @@
 package window
 
 import TodoEditorApplicationState
+import TodoEditorApplicationState.Companion.saveFileName
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.window.WindowState
+import java.io.File
 
 class TodoEditorWindowState(
     private val application: TodoEditorApplicationState,
@@ -17,7 +19,11 @@ class TodoEditorWindowState(
     }
 
     private fun save() {
-        // save text
+        val file = File(saveFileName)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        file.writeText(text.text)
     }
 
     val window = WindowState()

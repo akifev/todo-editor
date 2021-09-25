@@ -1,7 +1,9 @@
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.window.TrayState
+import editor.asAnnotated
 import window.TodoEditorWindowState
+import java.io.File
 
 @Composable
 fun rememberTodoEditorApplicationState() = remember {
@@ -11,6 +13,10 @@ fun rememberTodoEditorApplicationState() = remember {
 }
 
 class TodoEditorApplicationState {
+    companion object {
+        const val saveFileName = "save.txt"
+    }
+
     val tray = TrayState()
 
     private val _windows = mutableStateListOf<TodoEditorWindowState>()
@@ -25,12 +31,21 @@ class TodoEditorApplicationState {
         }
 
     fun newWindow() {
+        text = TextFieldValue(readSave().asAnnotated())
         _windows.add(
             TodoEditorWindowState(
                 application = this,
                 exit = _windows::remove
             )
         )
+    }
+
+    private fun readSave(): String {
+        val file = File(saveFileName)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file.readText()
     }
 
     fun exit() {
